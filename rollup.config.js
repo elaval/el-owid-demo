@@ -19,7 +19,8 @@ export default {
     output: {
       file: './lib/bundle.js',
       format: 'umd',
-      name : 'owid-demo'
+      name : 'owid-demo',
     },
+    external: ['d3']
   };
 
