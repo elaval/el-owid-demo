@@ -13,7 +13,9 @@
   "name": "@elaval/owid-demo",
   "types": "out-tsc/src/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js"
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js",
+    "publish" : "npm version patch && npm publish --access=public",
+    "version" : "npm version patch"
   },
   "version": "0.0.7",
   "devDependencies": {

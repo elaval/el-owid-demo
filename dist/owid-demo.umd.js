@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.0.6 Copyright 
+// @elaval/owid-demo v0.0.7 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.0.6";
+var version = "0.0.7";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -210,27 +210,6 @@ function tickStep(start, stop, count) {
   else if (error >= e5) step1 *= 5;
   else if (error >= e2) step1 *= 2;
   return stop < start ? -step1 : step1;
-}
-
-function min(values, valueof) {
-  let min;
-  if (valueof === undefined) {
-    for (const value of values) {
-      if (value != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  }
-  return min;
 }
 
 function identity$3(x) {
@@ -21811,12 +21790,6 @@ class OWIDTrendChart {
     }
 }
 
-function Add(x, y) {
-    return min([x, y]);
-}
-
-const hello = (name) => "Hello, " + name + "!";
-const test = (a, b) => Add(a, b);
 function OWIDPlot(data, options) {
     const type = options && options.type || "trendChart";
     if (type == "trendChart") {
@@ -21829,8 +21802,6 @@ function OWIDPlot(data, options) {
 }
 
 exports.OWIDPlot = OWIDPlot;
-exports.hello = hello;
-exports.test = test;
 exports.version = version;
 
 Object.defineProperty(exports, '__esModule', { value: true });
