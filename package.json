@@ -4,5 +4,6 @@
     "types": "lib/index.d.ts",
     "scripts": {
         "build": "tsc"
-      }
+    },
+    "version": "0.0.1"
 }
