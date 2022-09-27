@@ -2,12 +2,12 @@ import * as d3 from 'd3';
 import * as _ from 'lodash';
 
 import { OWIDTrendChartLines }  from "./OWIDTrendChartLines";
-import { OWIDTooltipTrend } from './OWIDTooltipTrend';
+import { OWIDTrendChartTooltip } from "./OWIDTrendChartTooltip";
 
 export class OWIDTrendChart {
     data: [] = [];
     container: d3.Selection<any, any, any, any>;
-    height:number = 400;
+    height:number;
     width: number;
     marginTop: number;
     marginBottom: number;
@@ -97,7 +97,7 @@ export class OWIDTrendChart {
     
         this.chartContainer.node().appendChild(this.chartSVG.node());
     
-        this.toolTip = new OWIDTooltipTrend({ colorScale: this.colorScale });
+        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale });
     
         this.chartContainer.node().appendChild(this.toolTip.render().node());
     
@@ -185,137 +185,7 @@ export class OWIDTrendChart {
         return svg;
       }
 
-    css(): string | number | boolean | d3.ValueFn<any, undefined, string | number | boolean | null> | null {
-        
-        const inlineCss = `
-            .${this.className} {
-                display: block;
-                background: white;
-                height: auto;
-                height: intrinsic;
-                max-width: 100%;
-            }
-            .${this.className} text,
-            .${this.className} tspan {
-                white-space: pre;
-            }
-            .${this.className} .axis text {
-                white-space: pre;    font-size: 16.2px;
-                fill: rgb(102, 102, 102);        
-            }
-    
-            .${this.className} .axis path {
-                display: none
-            }
-            .${this.className} .axis.y line {
-                display: none
-            }
-    
-            .GrapherComponent {
-                display: inline-block;
-                border-bottom: none;
-                border-radius: 2px;
-                text-align: left;
-            
-                line-height: 1em;
-            
-                background: white;
-                color: #333;
-            
-                position: relative;
-            
-                /* Hidden overflow x so that tooltips don't cause scrollbars 
-                overflow: hidden;
-            
-                border-radius: 2px;
-                box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 2px 0px,
-                    rgba(0, 0, 0, 0.25) 0px 2px 2px 0px;
-                z-index: $zindex-chart;
-            
-                * {
-                    box-sizing: border-box;
-                }
-            
-                button {
-                    background: none;
-                    border: none;
-                }
-            
-                .btn {
-                    font-size: 0.8em;
-                    white-space: normal;
-                }
-            
-                .flash {
-                    margin: 10px;
-                }
-            
-                .clickable {
-                    cursor: pointer;
-            
-                    a {
-                        text-decoration: none;
-                        &:visited {
-                            color: initial;
-                        }
-                    }
-                }
-                input[type="checkbox"] {
-                    cursor: pointer;
-                }
-            
-                /* Make World line slightly thicker 
-                svg .key-World_0 polyline {
-                    stroke-width: 2 !important;
-                }
-            
-                .projection .nv-line {
-                    stroke-dasharray: 3, 3;
-                }
-            
-                .projection .nv-point {
-                    fill: #fff;
-                    stroke-width: 1;
-                    opacity: 0.5;
-                }
-            
-                .projection .nv-point.hover {
-                    stroke-width: 4;
-                }
-            
-                a {
-                    cursor: pointer;
-                    color: #0645ad;
-                    fill: #0645ad;
-                    border-bottom: none;
-                }
-            
-                h2 {
-                    font-size: 2em;
-                    margin-top: 0;
-                    margin-bottom: 0.8em;
-                    font-weight: 500;
-                    line-height: 1.1;
-                }
-            
-                .unstroked {
-                    display: none;
-                }
-            
-                .DownloadTab,
-                .tableTab,
-                .sourcesTab {
-                    z-index: $zindex-tab;
-                }
-            }
-    
-    
-            `;
-        return inlineCss;
-    }
-
-
-    handleMouseMove(e: any): void {
+      handleMouseMove(e: any): void {
         const pos = d3.pointer(e);
 
         const selectedYear = this.getClosestYear(pos[0]);
@@ -387,7 +257,7 @@ export class OWIDTrendChart {
         return textWidth as number;
       
     }
-    showGridY() {
+    showGridX() {
         const axisScale:any = this.axisX.scale()
         const gridValues = axisScale.ticks();
         this.chartSVG
@@ -406,7 +276,8 @@ export class OWIDTrendChart {
           .attr("stroke-width", 1)
           .attr("stroke", "lightgrey");
     }
-    showGridX() {
+
+    showGridY() {
         const axisScale:any = this.axisY.scale();
         const gridValues = axisScale.ticks();
 
@@ -438,5 +309,139 @@ export class OWIDTrendChart {
     render() {
         return this.chartContainer.node();
     }
+
+ 
+
+    css(): string  {
+
+        const inlineCss = `
+        .${this.className} {
+            display: block;
+            background: white;
+            height: auto;
+            height: intrinsic;
+            max-width: 100%;
+        }
+        .${this.className} text,
+        .${this.className} tspan {
+            white-space: pre;
+        }
+        .${this.className} .axis text {
+            white-space: pre;    font-size: 16.2px;
+            fill: rgb(102, 102, 102);        
+        }
+
+        .${this.className} .axis path {
+            display: none
+        }
+        .${this.className} .axis.y line {
+            display: none
+        }
+
+        .GrapherComponent {
+            display: inline-block;
+            border-bottom: none;
+            border-radius: 2px;
+            text-align: left;
+
+            line-height: 1em;
+
+            background: white;
+            color: #333;
+
+            position: relative;
+
+            /* Hidden overflow x so that tooltips don't cause scrollbars 
+            overflow: hidden;
+
+            border-radius: 2px;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 2px 0px,
+                rgba(0, 0, 0, 0.25) 0px 2px 2px 0px;
+            z-index: $zindex-chart;
+
+            * {
+                box-sizing: border-box;
+            }
+
+            button {
+                background: none;
+                border: none;
+            }
+
+            .btn {
+                font-size: 0.8em;
+                white-space: normal;
+            }
+
+            .flash {
+                margin: 10px;
+            }
+
+            .clickable {
+                cursor: pointer;
+
+                a {
+                    text-decoration: none;
+                    &:visited {
+                        color: initial;
+                    }
+                }
+            }
+            input[type="checkbox"] {
+                cursor: pointer;
+            }
+
+            /* Make World line slightly thicker 
+            svg .key-World_0 polyline {
+                stroke-width: 2 !important;
+            }
+
+            .projection .nv-line {
+                stroke-dasharray: 3, 3;
+            }
+
+            .projection .nv-point {
+                fill: #fff;
+                stroke-width: 1;
+                opacity: 0.5;
+            }
+
+            .projection .nv-point.hover {
+                stroke-width: 4;
+            }
+
+            a {
+                cursor: pointer;
+                color: #0645ad;
+                fill: #0645ad;
+                border-bottom: none;
+            }
+
+            h2 {
+                font-size: 2em;
+                margin-top: 0;
+                margin-bottom: 0.8em;
+                font-weight: 500;
+                line-height: 1.1;
+            }
+
+            .unstroked {
+                display: none;
+            }
+
+            .DownloadTab,
+            .tableTab,
+            .sourcesTab {
+                z-index: $zindex-tab;
+            }
+        }
+
+
+        `;
+        return inlineCss;
+    }
+
+
+
 }
 

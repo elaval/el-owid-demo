@@ -40,15 +40,15 @@ export declare class OWIDTrendChart {
     ariaDescription: any;
     constructor(data: any, options: any);
     setupSVGElements(): d3.Selection<SVGSVGElement, undefined, null, undefined>;
-    css(): string | number | boolean | d3.ValueFn<any, undefined, string | number | boolean | null> | null;
     handleMouseMove(e: any): void;
     handleMouseLeave(): void;
     getDimensionValues(dimension: string): any;
     calculateMarginLeft(): number;
     calculateMarginRight(): number;
     getTextWidth(text: any, fontSize: string | number, fontFace: string): number;
-    showGridY(): void;
     showGridX(): void;
+    showGridY(): void;
     getClosestYear(posX: number): number;
     render(): any;
+    css(): string;
 }

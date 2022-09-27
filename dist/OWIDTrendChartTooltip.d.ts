@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-export declare class OWIDTooltipTrend {
+export declare class OWIDTrendChartTooltip {
     colorScale: any;
     tooltipContainer: d3.Selection<any, undefined, null, undefined>;
     toolTip: any;
