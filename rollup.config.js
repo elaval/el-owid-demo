@@ -1,26 +1,66 @@
-// rollup.config.js
-/*
-import merge from 'deepmerge';
-import { createBasicConfig } from '@open-wc/building-rollup';
+import fs from "fs";
+import {terser} from "rollup-plugin-terser";
+import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
+import node from "@rollup/plugin-node-resolve";
+import * as meta from "./package.json";
+import typescript from "@rollup/plugin-typescript";
 
-const baseConfig = createBasicConfig();
+const filename = meta.name.split("/").pop();
 
-export default merge(baseConfig, {
-  input: './out-tsc/src/index.js',
+// Resolve D3 dependency.
+const d3 = JSON.parse(fs.readFileSync("./node_modules/d3/package.json", "utf-8"));
+if (typeof d3.jsdelivr === "undefined") throw new Error("unable to resolve d3");
+const d3Path = `d3@${d3.version}/${d3.jsdelivr}`;
+
+// Extract copyrights from the LICENSE.
+const copyrights = fs
+  .readFileSync("./LICENSE", "utf-8")
+  .split(/\n/g)
+  .filter((line) => /^copyright\s+/i.test(line))
+  .map((line) => line.replace(/^copyright\s+/i, ""));
+
+const config = {
+  input: "bundle.js",
+  //external: ["d3"],
   output: {
-      dir: 'dist',
-      format:"umd"
-  }
-});
-*/
+    indent: false,
+    banner: `// ${meta.name} v${meta.version} Copyright ${copyrights.join(", ")}`
+  },
+  plugins: [typescript(), commonjs(), json(), node()]
+};
 
-export default {
-    input: 'out-tsc/src/index.js',
+export default [
+  {
+    ...config,
     output: {
-      file: './lib/bundle.js',
-      format: 'umd',
-      name : 'owid-demo',
+      ...config.output,
+      name: "owid-demo",
+      format: "umd",
+      extend: true,
+      file: `dist/${filename}.umd.js`,
+      //globals: {d3: "d3"},
+      paths: {d3: d3Path}
+    }
+  },
+  {
+    ...config,
+    output: {
+      ...config.output,
+      name: "owid-demo",
+      format: "umd",
+      extend: true,
+      file: `dist/${filename}.umd.min.js`,
+      //globals: {d3: "d3"},
+      paths: {d3: d3Path}
     },
-    external: ['d3']
-  };
-
+    plugins: [
+      ...config.plugins,
+      terser({
+        output: {
+          preamble: config.output.banner
+        }
+      })
+    ]
+  }
+];

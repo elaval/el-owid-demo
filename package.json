@@ -1,13 +1,27 @@
 {
+  "license": "ISC",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "jsdelivr": "dist/owid-demo.umd.min.js",
+  "unpkg": "dist/owid-demo.umd.min.js",
+  "exports": {
+    "mocha": "./src/index.js",
+    "umd": "./dist/owid-demo.umd.min.js",
+    "default": "./dist/index.js"
+  },
     "name": "@elaval/owid-demo",
-    "main": "lib/bundle.js",
-    "types": "lib/index.d.ts",
+    "types": "out-tsc/src/index.d.ts",
     "scripts": {
         "build": "rimraf dist && tsc && rollup -c rollup.config.js"
     },
     "version": "0.0.5",
     "devDependencies": {
         "@open-wc/building-rollup": "^2.0.2",
+        "@rollup/plugin-commonjs": "^19.0.2",
+        "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-node-resolve": "^13.0.6",
+        "@rollup/plugin-typescript": "^8.5.0",
         "deepmerge": "^4.2.2",
         "rimraf": "^3.0.2",
         "rollup": "^2.79.1",
