@@ -14,10 +14,10 @@
   "types": "out-tsc/src/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc && rollup -c rollup.config.js",
-    "publish": "npm version patch && npm publish --access=public",
+    "publish": "npm publish --access=public",
     "version": "npm version patch"
   },
-  "version": "0.0.8",
+  "version": "0.0.9",
   "devDependencies": {
     "@open-wc/building-rollup": "^2.0.2",
     "@rollup/plugin-commonjs": "^19.0.2",
