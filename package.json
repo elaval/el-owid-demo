@@ -5,7 +5,7 @@
     "scripts": {
         "build": "rimraf dist && tsc && rollup -c rollup.config.js"
     },
-    "version": "0.0.3",
+    "version": "0.0.4",
     "devDependencies": {
         "@open-wc/building-rollup": "^2.0.2",
         "deepmerge": "^4.2.2",
