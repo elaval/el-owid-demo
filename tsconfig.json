@@ -1,20 +1,17 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Node 16",
-  
     "compilerOptions": {
-      "lib": ["es2022"],
-      "module": "commonjs",
-      "target": "es2022",
-  
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-  
-      "outDir": "lib",
-      "declaration": true
-    },
-  
-    "include": ["src/**/*"]
+      "target": "es2018",                          
+      "module": "esnext",
+      "moduleResolution": "node",                     
+      "noEmitOnError": true,
+      "lib": ["es2017"],                            
+      "strict": true,  
+      "esModuleInterop": false,                 
+      "outDir": "out-tsc",
+      "rootDir": "./",
+      "emitDeclarationOnly": false,
+    }
+    ,
+    "include": ["./src/**/*.ts"]
   }
+
