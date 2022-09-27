@@ -1,6 +1,6 @@
 {
     "name": "@elaval/owid-demo",
-    "main": "lib/index.js",
+    "main": "lib/bundle.js",
     "types": "lib/index.d.ts",
     "scripts": {
         "build": "tsc"
