@@ -3,9 +3,9 @@
     "main": "lib/bundle.js",
     "types": "lib/index.d.ts",
     "scripts": {
-      "build": "rimraf dist && tsc && rollup -c rollup.config.js"
+        "build": "rimraf dist && tsc && rollup -c rollup.config.js"
     },
-    "version": "0.0.2",
+    "version": "0.0.3",
     "devDependencies": {
         "@open-wc/building-rollup": "^2.0.2",
         "deepmerge": "^4.2.2",
