@@ -1,15 +1,16 @@
 {
     "compilerOptions": {
-      "target": "es2018",                          
+      "target": "es2022",                          
       "module": "esnext",
-      "moduleResolution": "node",                     
       "noEmitOnError": true,
-      "lib": ["es2017"],                            
+      "lib": ["es2022"],                            
       "strict": true,  
-      "esModuleInterop": false,                 
+      "esModuleInterop": true, 
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "emitDeclarationOnly": false,
       "outDir": "out-tsc",
       "rootDir": "./",
-      "emitDeclarationOnly": false,
     }
     ,
     "include": ["./src/**/*.ts"]

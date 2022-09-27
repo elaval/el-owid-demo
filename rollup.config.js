@@ -1,5 +1,5 @@
 // rollup.config.js
-
+/*
 import merge from 'deepmerge';
 import { createBasicConfig } from '@open-wc/building-rollup';
 
@@ -12,3 +12,14 @@ export default merge(baseConfig, {
       format:"umd"
   }
 });
+*/
+
+export default {
+    input: 'out-tsc/src/index.js',
+    output: {
+      file: './lib/bundle.js',
+      format: 'umd',
+      name : 'owid-demo'
+    },
+  };
+
