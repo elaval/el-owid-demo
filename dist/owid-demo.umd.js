@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.0.14 Copyright 
+// @elaval/owid-demo v0.1.1 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.0.14";
+var version = "0.1.1";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -21347,9 +21347,11 @@ class OWIDTrendChartTooltip {
     colorScale;
     tooltipContainer;
     toolTip;
+    containerWidth;
     constructor(options) {
         this.colorScale =
             (options && options.colorScale) || ordinal(category10);
+        this.containerWidth = (options && options.containerWidth) || 800;
         this.tooltipContainer = create$1("div").attr("class", "tooltip-container");
         this.toolTip = this.tooltipContainer
             .attr("class", "Tooltip")
@@ -21419,6 +21421,13 @@ class OWIDTrendChartTooltip {
             update.select("td.entityName").text((d) => d.entityName);
             update.select("td.value").text((d) => d.value);
         });
+        // Check if tooltip goes beyond right border
+        const tooltipWidth = this.tooltipContainer
+            .node()
+            .getBoundingClientRect().width;
+        if (pos[0] > this.containerWidth - tooltipWidth) {
+            this.tooltipContainer.style("left", `${pos[0] - tooltipWidth - 30}px`);
+        }
     }
     hide() {
         this.tooltipContainer.style("display", "none");
@@ -21499,7 +21508,7 @@ class OWIDTrendChart {
             .attr("style", "position: relative; clear: both;");
         this.chartSVG = this.setupSVGElements();
         this.chartContainer.node().appendChild(this.chartSVG.node());
-        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale });
+        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
         if (this.y && this.y.grid) {
             this.showGridY();

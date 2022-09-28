@@ -79,7 +79,7 @@ export class OWIDTrendChart {
             .attr("style", "position: relative; clear: both;");
         this.chartSVG = this.setupSVGElements();
         this.chartContainer.node().appendChild(this.chartSVG.node());
-        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale });
+        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
         if (this.y && this.y.grid) {
             this.showGridY();
