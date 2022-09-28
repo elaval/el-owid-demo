@@ -28,5 +28,11 @@ This repository is an extremely basic POC of this concept.  We create a visualiz
 
 Here you can access a very basic demo (a plain html file stored in a file storage service) that loads the visualization component, retreived the data from OWID Backend and renders a trend chart.
 
-<a src="https://elaval.s3.amazonaws.com/owid/basicDemo/index.html" target="_blank">https://elaval.s3.amazonaws.com/owid/basicDemo/index.html</a>
+<a href="https://elaval.s3.amazonaws.com/owid/basicDemo/index.html" target="_blank">https://elaval.s3.amazonaws.com/owid/basicDemo/index.html</a>
+
+The following link shows how this component can be reused in www.observablehq.com.  This opens the door for using OWID component in platforms that are flexible for quick exploration and publication of data:
+
+<a href="https://observablehq.com/@elaval/owid-visualisation-components-poc" target="_blank">https://observablehq.com/@elaval/owid-visualisation-components-poc</a>
+
+https://observablehq.com/@elaval/owid-visualisation-components-poc
 
