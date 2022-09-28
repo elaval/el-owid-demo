@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.0.7 Copyright 
+// @elaval/owid-demo v0.0.13 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.0.7";
+var version = "0.0.13";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -21564,7 +21564,7 @@ class OWIDTrendChart {
         return svg;
     }
     handleMouseMove(e) {
-        const pos = pointer(e);
+        const pos = pointer(e, this.chartSVG);
         const selectedYear = this.getClosestYear(pos[0]);
         this.chartContent && this.chartContent.showMarker(selectedYear);
         const tooltipData = lodash.exports.chain(this.seriesData)

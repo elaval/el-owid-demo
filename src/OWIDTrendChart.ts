@@ -186,7 +186,7 @@ export class OWIDTrendChart {
       }
 
       handleMouseMove(e: any): void {
-        const pos = d3.pointer(e);
+        const pos = d3.pointer(e, this.chartSVG);
 
         const selectedYear = this.getClosestYear(pos[0]);
         this.chartContent && this.chartContent.showMarker(selectedYear);
