@@ -145,8 +145,9 @@ export class OWIDTrendChart {
         return svg;
     }
     handleMouseMove(e) {
-        const pos = d3.pointer(e, this.chartSVG);
-        const selectedYear = this.getClosestYear(pos[0]);
+        const pos_relTarget = d3.pointer(e);
+        const pos_relContainer = d3.pointer(e, this.chartContainer);
+        const selectedYear = this.getClosestYear(pos_relTarget[0]);
         this.chartContent && this.chartContent.showMarker(selectedYear);
         const tooltipData = _.chain(this.seriesData)
             .map((d) => {
@@ -158,7 +159,7 @@ export class OWIDTrendChart {
         })
             .sortBy((d) => -d.value)
             .value();
-        this.toolTip.show([pos[0] + this.marginLeft, this.height * 0.25], {
+        this.toolTip.show([pos_relContainer[0], this.height * 0.25], {
             year: selectedYear,
             data: tooltipData
         });
@@ -244,6 +245,15 @@ export class OWIDTrendChart {
     }
     css() {
         const inlineCss = `
+
+        .chartContainer {
+          display: block;
+          background: white;
+          height: auto;
+          height: intrinsic;
+          max-width: 100%;
+        }
+
         .${this.className} {
             display: block;
             background: white;

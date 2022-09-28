@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.0.13 Copyright 
+// @elaval/owid-demo v0.0.14 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.0.13";
+var version = "0.0.14";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -21564,8 +21564,9 @@ class OWIDTrendChart {
         return svg;
     }
     handleMouseMove(e) {
-        const pos = pointer(e, this.chartSVG);
-        const selectedYear = this.getClosestYear(pos[0]);
+        const pos_relTarget = pointer(e);
+        const pos_relContainer = pointer(e, this.chartContainer);
+        const selectedYear = this.getClosestYear(pos_relTarget[0]);
         this.chartContent && this.chartContent.showMarker(selectedYear);
         const tooltipData = lodash.exports.chain(this.seriesData)
             .map((d) => {
@@ -21577,7 +21578,7 @@ class OWIDTrendChart {
         })
             .sortBy((d) => -d.value)
             .value();
-        this.toolTip.show([pos[0] + this.marginLeft, this.height * 0.25], {
+        this.toolTip.show([pos_relContainer[0], this.height * 0.25], {
             year: selectedYear,
             data: tooltipData
         });
@@ -21663,6 +21664,15 @@ class OWIDTrendChart {
     }
     css() {
         const inlineCss = `
+
+        .chartContainer {
+          display: block;
+          background: white;
+          height: auto;
+          height: intrinsic;
+          max-width: 100%;
+        }
+
         .${this.className} {
             display: block;
             background: white;
