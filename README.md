@@ -26,5 +26,7 @@ If we have a sound architectural foundation, OWID vis components could be cretae
 
 This repository is an extremely basic POC of this concept.  We create a visualization componnet that can be distributed as a javascript package (technically an npm package) that could be reused in Javascript code or in platforms such as observable explorer.
 
-This 
+Here you can access a very basic demo (a plain html file stored in a file storage service) that loads the visualization component, retreived the data from OWID Backend and renders a trend chart.
+
+<a src="https://elaval.s3.amazonaws.com/owid/basicDemo/index.html" target="_blank">https://elaval.s3.amazonaws.com/owid/basicDemo/index.html</a>
 
