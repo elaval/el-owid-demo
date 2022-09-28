@@ -14,8 +14,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc && rollup -c rollup.config.js",
-    "publish": "npm publish --access=public",
-    "version": "npm version patch"
+    "publish_": "npm publish --access=public",
+    "version_": "npm version patch"
   },
   "version": "0.1.0",
   "devDependencies": {
