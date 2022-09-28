@@ -34,5 +34,18 @@ The following link shows how this component can be reused in www.observablehq.co
 
 <a href="https://observablehq.com/@elaval/owid-visualisation-components-poc" target="_blank">https://observablehq.com/@elaval/owid-visualisation-components-poc</a>
 
-https://observablehq.com/@elaval/owid-visualisation-components-poc
+## Future steps - bring the queries to the client
+With the posibility to have compact information stored in formats such as Parquet and lightweight databases that can be managed directly on the browser (such as DuckDB), it is possible to rethink the role of the backend and fronent in relation to datamanagement.
+
+With datasets that are relatively stable (many with yearly updates), it is possibe to distribute the data as single or grouped datasets with no server code (e.g. blob storage / distribution services or even public access github repositories) and build certain level of data management directly on the client (meaning the users web browser). This is an avenue worth exploring.
+
+## Aim - focus data visualization efforts on communication and user experience, not on web page development 
+When we work on datavisualization we can spend an important amount of time on details that help the user to better understand the data (and the stories hidden in the data).  This should be an important focus for data visualization.
+
+An important amount of time for quicly exploring data patterns, anomalies, differences and similarities ... for teams to "explore" the data. And then, once we understand the key aspects of a specific info domain, polish the presentation in order to be able to communicate the important messages, to focus on the right content (and not on fancy distractor).
+
+If we get the right architecture (and tools) the effort can be concenbtrated on the important topics that add value.
+
+
+
 
