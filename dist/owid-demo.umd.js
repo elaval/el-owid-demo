@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.1.1 Copyright 
+// @elaval/owid-demo v0.1.2 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.1.1";
+var version = "0.1.2";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -3850,9 +3850,7 @@ function colors(specifier) {
   return colors;
 }
 
-var category10 = colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
-
-var Tableau10 = colors("4e79a7f28e2ce1575976b7b259a14fedc949af7aa1ff9da79c755fbab0ab");
+var schemeCategory10 = colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
 
 function constant(x) {
   return function constant() {
@@ -21208,6 +21206,291 @@ var lodash = {exports: {}};
 }.call(commonjsGlobal));
 }(lodash, lodash.exports));
 
+const baseCSS = `
+
+.chartContainer {
+  display: block;
+  background: white;
+  height: auto;
+  height: intrinsic;
+  max-width: 100%;
+}
+
+.owidChart{
+    display: block;
+    background: white;
+    height: auto;
+    height: intrinsic;
+    max-width: 100%;
+}
+.owidChart text,
+.owidChart tspan {
+    white-space: pre;
+}
+.owidChart .axis text {
+    white-space: pre;    font-size: 16.2px;
+    fill: rgb(102, 102, 102);        
+}
+
+.owidChart .axis path {
+    display: none
+}
+.owidChart .axis.y line {
+    display: none
+}
+
+.GrapherComponent {
+    display: inline-block;
+    border-bottom: none;
+    border-radius: 2px;
+    text-align: left;
+
+    line-height: 1em;
+
+    background: white;
+    color: #333;
+
+    position: relative;
+
+    /* Hidden overflow x so that tooltips don't cause scrollbars 
+    overflow: hidden;
+
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 2px 0px,
+        rgba(0, 0, 0, 0.25) 0px 2px 2px 0px;
+    z-index: $zindex-chart;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    button {
+        background: none;
+        border: none;
+    }
+
+    .btn {
+        font-size: 0.8em;
+        white-space: normal;
+    }
+
+    .flash {
+        margin: 10px;
+    }
+
+    .clickable {
+        cursor: pointer;
+
+        a {
+            text-decoration: none;
+            &:visited {
+                color: initial;
+            }
+        }
+    }
+    input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    /* Make World line slightly thicker 
+    svg .key-World_0 polyline {
+        stroke-width: 2 !important;
+    }
+
+    .projection .nv-line {
+        stroke-dasharray: 3, 3;
+    }
+
+    .projection .nv-point {
+        fill: #fff;
+        stroke-width: 1;
+        opacity: 0.5;
+    }
+
+    .projection .nv-point.hover {
+        stroke-width: 4;
+    }
+
+    a {
+        cursor: pointer;
+        color: #0645ad;
+        fill: #0645ad;
+        border-bottom: none;
+    }
+
+    h2 {
+        font-size: 2em;
+        margin-top: 0;
+        margin-bottom: 0.8em;
+        font-weight: 500;
+        line-height: 1.1;
+    }
+
+    .unstroked {
+        display: none;
+    }
+
+    .DownloadTab,
+    .tableTab,
+    .sourcesTab {
+        z-index: $zindex-tab;
+    }
+}
+
+
+`;
+
+const config$1 = {
+    // Margins for main chart content within <svg> element
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 20,
+    marginBottom: 20,
+    // Total dimension of chart (including margins)
+    heightTotal: 500,
+    widthTotal: 800,
+    colorScheme: schemeCategory10
+};
+
+class OWIDBaseChart {
+    data = [];
+    height;
+    width;
+    marginTop = config$1.marginTop;
+    marginBottom = config$1.marginBottom;
+    marginLeft = config$1.marginLeft;
+    marginRight = config$1.marginRight;
+    heightTotal = config$1.heightTotal;
+    widthTotal = config$1.widthTotal;
+    unit;
+    className;
+    valuesRange;
+    dimensions;
+    scaleColor;
+    chartContainer;
+    chartSVG;
+    toolTip;
+    colorScale;
+    chartContent;
+    x;
+    y;
+    constructor(data, options) {
+        this.data = data;
+        this.marginTop = (options && options.marginTop) || this.marginTop;
+        this.marginBottom = (options && options.marginBottom) || this.marginBottom;
+        this.marginLeft = (options && options.marginLeft) || this.marginLeft;
+        this.marginTop = (options && options.marginTop) || this.marginTop;
+        this.height = this.heightTotal - this.marginBottom - this.marginTop;
+        this.width = this.widthTotal - this.marginLeft - this.marginRight;
+        this.y = (options && options.y) || {};
+        this.x = (options && options.x) || {};
+        this.unit = (options && options.unit) || "";
+        this.className = "owidChart";
+        this.unit = (options && options.unit) || "";
+        this.valuesRange = extent(this.data, (d) => d.value);
+        this.dimensions = {
+            years: (options && options.years) || this.getDimensionValues("year"),
+            entities: (options && options.enitites) || this.getDimensionValues("entityName")
+        };
+        this.scaleColor = ordinal(config$1.colorScheme);
+        this.chartContainer = create$1("div")
+            .attr("class", "chartContainer")
+            .attr("style", "position: relative; clear: both;");
+        this.chartSVG = this.chartContainer
+            .append("svg");
+        this.chartContainer
+            .append("div")
+            .attr("class", "tooltipContainer");
+        this.setupSVGElements(this.chartSVG);
+    }
+    setupSVGElements(svg) {
+        svg
+            .attr("class", this.className)
+            .attr("fill", "currentColor")
+            .attr("font-family", "system-ui, sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "middle")
+            .attr("width", this.widthTotal)
+            .attr("height", this.heightTotal)
+            .attr("viewBox", `0 0 ${this.widthTotal} ${this.heightTotal}`)
+            .call((svg) => svg.append("style").text(this.css()))
+            .call((svg) => svg
+            .append("rect")
+            .attr("width", this.widthTotal)
+            .attr("height", this.heightTotal)
+            .attr("fill", "white"));
+        const mainContainer = svg
+            .append("g")
+            .attr("class", "container")
+            .attr("transform", `translate(${this.marginLeft}, ${this.marginTop})`)
+            .call((g) => g
+            .append("rect")
+            .attr("class", "backgroundLayer")
+            .attr("width", this.width)
+            .attr("height", this.height)
+            .attr("fill", "white"))
+            .call((g) => g
+            .append("g")
+            .attr("class", "axis x")
+            .attr("transform", `translate(${0}, ${this.height})`))
+            .call((g) => g
+            .append("g")
+            .attr("class", "axis y")
+            .attr("transform", `translate(0,0)`));
+        mainContainer
+            .select("rect.backgroundLayer")
+            .on("mousemove", (e) => this.handleMouseMove(e))
+            .on("mouseleave", () => this.handleMouseLeave());
+        return svg;
+    }
+    /**
+     * updateDimensions
+     * Updated charts internat height / width dimensons based on current margins
+     */
+    updateDimensions() {
+        // Applies new left margin to our chart main <g> container
+        this.chartContainer.select("svg")
+            .select("g.container")
+            .attr("transform", `translate(${this.marginLeft}, ${this.marginTop})`);
+        this.chartContainer.select("svg")
+            .select("g.container")
+            .select("rect.backgroundLayer")
+            .attr("width", this.width)
+            .attr("height", this.height);
+        this.chartContainer.select("svg")
+            .select("g.axis.x")
+            .attr("transform", `translate(${0}, ${this.height})`);
+    }
+    handleMouseMove(e) {
+        pointer(e);
+        pointer(e, this.chartContainer);
+    }
+    handleMouseLeave() {
+        this.chartContent && this.chartContent.hideMarker();
+    }
+    getDimensionValues(dimension) {
+        return lodash.exports.chain(this.data)
+            .map((d) => d[dimension])
+            .uniq()
+            .value();
+    }
+    getTextWidth(text, fontSize, fontFace) {
+        const canvas = document.createElement("canvas"), context = canvas.getContext("2d");
+        let textWidth = null;
+        if (context) {
+            context.font = fontSize + "px " + fontFace;
+            textWidth = context.measureText(text).width;
+        }
+        return textWidth;
+    }
+    render() {
+        return this.chartContainer.node();
+    }
+    css() {
+        return baseCSS;
+    }
+}
+
 class OWIDTrendChartLines {
     unit;
     entities;
@@ -21228,7 +21511,7 @@ class OWIDTrendChartLines {
         this.dotSizeStandard = 2;
         this.dotSizeHighlighted = 4;
         this.scaleColor =
-            (options && options.scaleColor) || ordinal(category10);
+            (options && options.scaleColor) || ordinal(schemeCategory10);
         this.years = lodash.exports.chain(data)
             .map((d) => d.year)
             .uniq()
@@ -21350,7 +21633,7 @@ class OWIDTrendChartTooltip {
     containerWidth;
     constructor(options) {
         this.colorScale =
-            (options && options.colorScale) || ordinal(category10);
+            (options && options.colorScale) || ordinal(schemeCategory10);
         this.containerWidth = (options && options.containerWidth) || 800;
         this.tooltipContainer = create$1("div").attr("class", "tooltip-container");
         this.toolTip = this.tooltipContainer
@@ -21434,54 +21717,55 @@ class OWIDTrendChartTooltip {
     }
 }
 
-class OWIDTrendChart {
-    data = [];
-    container;
-    height;
-    width;
-    marginTop;
-    marginBottom;
-    y;
-    x;
-    chartType;
-    unit;
-    className;
-    filter;
-    filteredData;
-    valuesRange;
-    dimensions;
+const config = {
+    // Margins for main chart content within <svg> element
+    marginBottom: 50
+};
+
+class OWIDTrendChart extends OWIDBaseChart {
     scaleX;
     scaleY;
-    scaleColor;
     axisX;
     axisY;
-    marginLeft;
-    marginRight;
     seriesData;
-    chartContainer;
-    chartSVG;
-    toolTip;
-    colorScale;
-    chartContent;
-    markEL;
-    ariaLabel;
-    ariaDescription;
+    /*
+        data: [] = [];
+        container: d3.Selection<any, any, any, any>;
+        height:number;
+        width: number;
+        marginTop: number;
+        marginBottom: number;
+        y: {grid:any};
+        x: {grid:any};
+        chartType: String;
+        unit: String;
+        className: string;
+        filter: any;
+        filteredData: [];
+        valuesRange: [any, any];
+        dimensions: { years: any; entities: any; };
+        scaleX: d3.ScaleLinear<number, number, never>;
+        scaleY: d3.ScaleLinear<number, number, never>;
+        scaleColor: d3.ScaleOrdinal<string, string, never>;
+        axisX: d3.Axis<any>;
+        axisY: d3.Axis<any>;
+        marginLeft: any;
+        marginRight: any;
+        seriesData: any;
+        chartContainer: d3.Selection<any, undefined, null, undefined>;
+        chartSVG: any;
+        toolTip: any;
+        colorScale: any;
+        chartContent: any;
+        markEL: any;
+        ariaLabel:any;
+        ariaDescription:any;
+        */
     constructor(data, options) {
-        this.data = data;
-        this.container = create$1("svg");
-        this.height = (options && options.height) || 400;
-        this.width = (options && options.width) || 800;
-        this.marginTop = (options && options.marginTop) || 50;
-        this.marginBottom = (options && options.marginBottom) || 50;
-        this.y = (options && options.y) || {};
-        this.x = (options && options.x) || {};
-        this.chartType = (options && options.chartType) || "lineChart";
-        this.unit = (options && options.unit) || "";
-        this.className = "owidChart";
-        this.unit = (options && options.unit) || "";
-        this.filter = (options && options.filter) || null;
-        this.filteredData = this.filter ? data.filter((d) => this.filter(d)) : data;
-        this.valuesRange = extent(this.filteredData, (d) => d.value);
+        super(data, options);
+        this.marginBottom = config.marginBottom;
+        this.height = this.heightTotal - this.marginTop - this.marginBottom;
+        this.valuesRange = extent(this.data, (d) => d.value);
         this.dimensions = {
             years: (options && options.years) || this.getDimensionValues("year"),
             entities: (options && options.enitites) || this.getDimensionValues("entityName")
@@ -21490,7 +21774,6 @@ class OWIDTrendChart {
         this.scaleY = linear()
             .range([this.height, 0])
             .domain(this.valuesRange);
-        this.scaleColor = ordinal(Tableau10);
         this.axisX = axisBottom(this.scaleX).ticks(10, "d");
         this.axisY = axisLeft(this.scaleY)
             .ticks(10)
@@ -21499,15 +21782,14 @@ class OWIDTrendChart {
             (options && options.marginLeft) || this.calculateMarginLeft() * 1.5;
         this.marginRight =
             (options && options.marginRight) || this.calculateMarginRight() * 1.5;
-        this.seriesData = lodash.exports.chain(this.filteredData)
+        this.width = this.widthTotal - this.marginLeft - this.marginRight;
+        this.updateDimensions();
+        this.scaleX.range([0, this.width]);
+        this.scaleY.range([this.height, 0]);
+        this.seriesData = lodash.exports.chain(this.data)
             .groupBy((d) => d.entityName)
             .map((items, entityName) => ({ name: entityName, data: items }))
             .value();
-        this.chartContainer = create$1("div")
-            .attr("class", "chartContainer")
-            .attr("style", "position: relative; clear: both;");
-        this.chartSVG = this.setupSVGElements();
-        this.chartContainer.node().appendChild(this.chartSVG.node());
         this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
         if (this.y && this.y.grid) {
@@ -21516,61 +21798,25 @@ class OWIDTrendChart {
         if (this.x && this.x.grid) {
             this.showGridX();
         }
+        this.setupTrendSVGElements();
     }
-    setupSVGElements() {
-        const svg = create$1("svg")
-            .attr("class", this.className)
-            .attr("fill", "currentColor")
-            .attr("font-family", "system-ui, sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "middle")
-            .attr("width", this.width + this.marginLeft + this.marginRight)
-            .attr("height", this.height + this.marginTop + this.marginBottom)
-            .attr("viewBox", `0 0 ${this.width + this.marginLeft + this.marginRight} ${this.height + this.marginTop + this.marginBottom}`)
-            .attr("aria-label", this.ariaLabel)
-            .attr("aria-description", this.ariaDescription)
-            .call((svg) => svg.append("style").text(this.css()))
-            .call((svg) => svg
-            .append("rect")
-            .attr("width", this.width + this.marginLeft + this.marginRight)
-            .attr("height", this.height + this.marginTop + this.marginBottom)
-            .attr("fill", "white"));
-        const mainContainer = svg
-            .append("g")
-            .attr("class", "container")
-            .attr("transform", `translate(${this.marginLeft}, ${this.marginTop})`)
-            .call((g) => g
-            .append("rect")
-            .attr("class", "backgroundLayer")
-            .attr("width", this.width)
-            .attr("height", this.height)
-            .attr("fill", "white"))
-            .call((g) => g
-            .append("g")
-            .attr("class", "axis x")
-            .attr("transform", `translate(${0}, ${this.height})`))
-            .call((g) => g
-            .append("g")
-            .attr("class", "axis y")
-            .attr("transform", `translate(0,0)`));
+    setupTrendSVGElements() {
+        const mainContainer = this.chartContainer.select("svg").select("g.container");
         mainContainer
             .select("rect.backgroundLayer")
             .on("mousemove", (e) => this.handleMouseMove(e))
             .on("mouseleave", () => this.handleMouseLeave());
-        if (this.chartType == "lineChart") {
-            this.chartContent = new OWIDTrendChartLines(this.filteredData, {
-                scaleColor: this.scaleColor
-            });
-            this.markEL = this.chartContent.render({
-                x: this.scaleX,
-                y: this.scaleY
-            });
-        }
+        const chartContent = new OWIDTrendChartLines(this.data, {
+            scaleColor: this.scaleColor
+        });
+        const chartContentEL = chartContent.render({
+            x: this.scaleX,
+            y: this.scaleY
+        });
         mainContainer.select("g.axis.x").call(this.axisX);
         mainContainer.select("g.axis.y").call(this.axisY);
-        const newLocal = mainContainer.node();
-        newLocal && newLocal.append(this.markEL);
-        return svg;
+        const mainContainerNode = mainContainer.node();
+        mainContainerNode && mainContainerNode.appendChild(chartContentEL);
     }
     handleMouseMove(e) {
         const pos_relTarget = pointer(e);
@@ -21819,8 +22065,14 @@ function OWIDPlot(data, options) {
         return null;
     }
 }
+function OWIDPlotBase(data, options) {
+    options && options.type || "trendChart";
+    let chart = new OWIDBaseChart(data, options);
+    return chart.render();
+}
 
 exports.OWIDPlot = OWIDPlot;
+exports.OWIDPlotBase = OWIDPlotBase;
 exports.version = version;
 
 Object.defineProperty(exports, '__esModule', { value: true });
