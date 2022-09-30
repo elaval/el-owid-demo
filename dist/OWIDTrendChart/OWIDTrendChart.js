@@ -57,10 +57,10 @@ export class OWIDTrendChart extends OWIDBaseChart {
             .select("rect.backgroundLayer")
             .on("mousemove", (e) => this.handleMouseMove(e))
             .on("mouseleave", () => this.handleMouseLeave());
-        const chartContent = new OWIDTrendChartLines(this.data, {
+        this.chartContent = new OWIDTrendChartLines(this.data, {
             scaleColor: this.scaleColor
         });
-        const chartContentEL = chartContent.render({
+        const chartContentEL = this.chartContent.render({
             x: this.scaleX,
             y: this.scaleY
         });
