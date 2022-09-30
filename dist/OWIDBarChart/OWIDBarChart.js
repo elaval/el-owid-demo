@@ -1,80 +1,63 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
-import { OWIDBaseChart } from './OWIDBaseChart';
-import { OWIDTrendChartLines } from "./OWIDTrendChartLines";
-import { OWIDTrendChartTooltip } from "./OWIDTrendChartTooltip";
-import { config } from './OWIDTrendChartConfig';
-export class OWIDTrendChart extends OWIDBaseChart {
+import { OWIDBaseChart } from '../OWIDBaseChart';
+import { OWIDBarChartBars } from "./OWIDBarChartBars";
+import { OWIDBarChartTooltip } from "./OWIDBarChartTooltip";
+import { config } from './OWIDBarChartConfig';
+import { inlineCSS } from "./OWIDBarChartCSS";
+export class OWIDBarChart extends OWIDBaseChart {
     scaleX;
     scaleY;
     axisX;
     axisY;
-    seriesData;
-    /*
-        data: [] = [];
-        container: d3.Selection<any, any, any, any>;
-        height:number;
-        width: number;
-        marginTop: number;
-        marginBottom: number;
-        y: {grid:any};
-        x: {grid:any};
-        chartType: String;
-        unit: String;
-        className: string;
-        filter: any;
-        filteredData: [];
-        valuesRange: [any, any];
-        dimensions: { years: any; entities: any; };
-        scaleX: d3.ScaleLinear<number, number, never>;
-        scaleY: d3.ScaleLinear<number, number, never>;
-        scaleColor: d3.ScaleOrdinal<string, string, never>;
-        axisX: d3.Axis<any>;
-        axisY: d3.Axis<any>;
-        marginLeft: any;
-        marginRight: any;
-        seriesData: any;
-        chartContainer: d3.Selection<any, undefined, null, undefined>;
-        chartSVG: any;
-        toolTip: any;
-        colorScale: any;
-        chartContent: any;
-        markEL: any;
-        ariaLabel:any;
-        ariaDescription:any;
-        */
+    year;
+    latestYear;
+    entities;
+    singleYearData;
+    maxValue;
     constructor(data, options) {
         super(data, options);
+        this.latestYear = _.chain(data).map(d => d.year).max().value();
+        this.year = options && options.year || this.latestYear;
+        this.singleYearData = this.data.filter((d) => d.year == this.year);
         this.marginBottom = config.marginBottom;
         this.height = this.heightTotal - this.marginTop - this.marginBottom;
         this.valuesRange = d3.extent(this.data, (d) => d.value);
-        this.dimensions = {
-            years: (options && options.years) || this.getDimensionValues("year"),
-            entities: (options && options.enitites) || this.getDimensionValues("entityName")
-        };
-        this.scaleX = d3.scaleLinear().range([0, this.width]);
+        this.entities = _.chain(this.singleYearData)
+            .sortBy(d => d.value)
+            .map(d => d.entityName)
+            .uniq()
+            .value();
+        this.maxValue = _.chain(this.singleYearData)
+            .map(d => d.value)
+            .max()
+            .value();
+        this.scaleX = d3.scaleLinear()
+            .range([0, this.width])
+            .domain([0, this.maxValue]);
         this.scaleY = d3
-            .scaleLinear()
+            .scaleBand()
+            .padding(config.barsPadding)
             .range([this.height, 0])
-            .domain(this.valuesRange);
-        this.axisX = d3.axisBottom(this.scaleX).ticks(10, "d");
-        this.axisY = d3
-            .axisLeft(this.scaleY)
+            .domain(this.entities);
+        this.axisX = d3.axisBottom(this.scaleX)
             .ticks(10)
             .tickFormat((d) => `${d} ${this.unit}`);
+        this.axisY = d3
+            .axisLeft(this.scaleY);
+        // Update left/right margin depending on the length on entitynames & values
         this.marginLeft =
             (options && options.marginLeft) || this.calculateMarginLeft() * 1.5;
         this.marginRight =
             (options && options.marginRight) || this.calculateMarginRight() * 1.5;
+        // Adjust width according to new margins
         this.width = this.widthTotal - this.marginLeft - this.marginRight;
+        // Update dimensions of <svg> inner elements according to updated margins & witdh
         this.updateDimensions();
+        // Update scales ranges
         this.scaleX.range([0, this.width]);
         this.scaleY.range([this.height, 0]);
-        this.seriesData = _.chain(this.data)
-            .groupBy((d) => d.entityName)
-            .map((items, entityName) => ({ name: entityName, data: items }))
-            .value();
-        this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
+        this.toolTip = new OWIDBarChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
         if (this.y && this.y.grid) {
             this.showGridY();
@@ -82,49 +65,32 @@ export class OWIDTrendChart extends OWIDBaseChart {
         if (this.x && this.x.grid) {
             this.showGridX();
         }
-        this.setupTrendSVGElements();
+        this.setupBarsSVGElements();
     }
-    setupTrendSVGElements() {
+    setupBarsSVGElements() {
         const mainContainer = this.chartContainer.select("svg").select("g.container");
         mainContainer
             .select("rect.backgroundLayer")
             .on("mousemove", (e) => this.handleMouseMove(e))
             .on("mouseleave", () => this.handleMouseLeave());
-        const chartContent = new OWIDTrendChartLines(this.data, {
-            scaleColor: this.scaleColor
+        const chartBars = new OWIDBarChartBars(this.singleYearData, {
+            unit: this.unit
         });
-        const chartContentEL = chartContent.render({
+        const chartContainer = chartBars.render({
             x: this.scaleX,
             y: this.scaleY
         });
+        chartContainer
+            .append("style")
+            .text(inlineCSS);
         mainContainer.select("g.axis.x").call(this.axisX);
         mainContainer.select("g.axis.y").call(this.axisY);
         const mainContainerNode = mainContainer.node();
-        mainContainerNode && mainContainerNode.appendChild(chartContentEL);
+        mainContainerNode && mainContainerNode.appendChild(chartContainer.node());
     }
     handleMouseMove(e) {
-        const pos_relTarget = d3.pointer(e);
-        const pos_relContainer = d3.pointer(e, this.chartContainer);
-        const selectedYear = this.getClosestYear(pos_relTarget[0]);
-        this.chartContent && this.chartContent.showMarker(selectedYear);
-        const tooltipData = _.chain(this.seriesData)
-            .map((d) => {
-            const yearRecord = d.data.find((d) => d.year == selectedYear);
-            return {
-                entityName: d.name,
-                value: (yearRecord && yearRecord.value) || "NA"
-            };
-        })
-            .sortBy((d) => -d.value)
-            .value();
-        this.toolTip.show([pos_relContainer[0], this.height * 0.25], {
-            year: selectedYear,
-            data: tooltipData
-        });
     }
     handleMouseLeave() {
-        this.chartContent && this.chartContent.hideMarker();
-        this.toolTip.hide();
     }
     getDimensionValues(dimension) {
         return _.chain(this.data)
@@ -134,8 +100,8 @@ export class OWIDTrendChart extends OWIDBaseChart {
     }
     calculateMarginLeft() {
         const axisScale = this.axisY.scale();
-        const values = axisScale.ticks();
-        const tickContent = values.map((d) => `${d} ${this.unit}`);
+        const values = axisScale.domain();
+        const tickContent = values.map((d) => `${d}`);
         const tickSizes = tickContent.map((d) => this.getTextWidth(d, 16.2, "sans-serif"));
         const maxSize = _.max(tickSizes);
         return maxSize || 10;
@@ -176,23 +142,6 @@ export class OWIDTrendChart extends OWIDBaseChart {
             .attr("stroke", "lightgrey");
     }
     showGridY() {
-        const axisScale = this.axisY.scale();
-        const gridValues = axisScale.ticks();
-        this.chartSVG
-            .select("g.container")
-            .append("g")
-            .attr("class", "grid y")
-            .selectAll("line")
-            .data(gridValues)
-            .join("line")
-            .attr("class", "grid y")
-            .attr("x1", 0)
-            .attr("x2", this.width)
-            .attr("y1", (d) => this.scaleY(d))
-            .attr("y2", (d) => this.scaleY(d))
-            .attr("stroke-dasharray", "3,2")
-            .attr("stroke-width", 1)
-            .attr("stroke", "lightgrey");
     }
     getClosestYear(posX) {
         const closestYear = this.dimensions.years.find((d) => d == Math.floor(this.scaleX.invert(posX)));

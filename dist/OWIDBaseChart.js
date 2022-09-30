@@ -26,6 +26,8 @@ export class OWIDBaseChart {
     y;
     constructor(data, options) {
         this.data = data;
+        this.widthTotal = (options && options.width) || this.widthTotal;
+        this.heightTotal = (options && options.height) || this.heightTotal;
         this.marginTop = (options && options.marginTop) || this.marginTop;
         this.marginBottom = (options && options.marginBottom) || this.marginBottom;
         this.marginLeft = (options && options.marginLeft) || this.marginLeft;

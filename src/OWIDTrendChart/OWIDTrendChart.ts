@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
-import { OWIDBaseChart } from './OWIDBaseChart';
+import { OWIDBaseChart } from '../OWIDBaseChart';
 
 import { OWIDTrendChartLines }  from "./OWIDTrendChartLines";
 import { OWIDTrendChartTooltip } from "./OWIDTrendChartTooltip";

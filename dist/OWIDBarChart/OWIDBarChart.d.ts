@@ -1,16 +1,17 @@
 import * as d3 from 'd3';
-import { OWIDBaseChart } from './OWIDBaseChart';
-export declare class OWIDTrendChart extends OWIDBaseChart {
+import { OWIDBaseChart } from '../OWIDBaseChart';
+export declare class OWIDBarChart extends OWIDBaseChart {
     scaleX: d3.ScaleLinear<number, number, never>;
-    scaleY: d3.ScaleLinear<number, number, never>;
+    scaleY: d3.ScaleBand<any>;
     axisX: d3.Axis<d3.NumberValue>;
     axisY: d3.Axis<d3.NumberValue>;
-    seriesData: {
-        name: string;
-        data: any;
-    }[];
+    year: number;
+    latestYear: any;
+    entities: any[];
+    singleYearData: any;
+    maxValue: any;
     constructor(data: any, options: any);
-    setupTrendSVGElements(): void;
+    setupBarsSVGElements(): void;
     handleMouseMove(e: any): void;
     handleMouseLeave(): void;
     getDimensionValues(dimension: string): any;

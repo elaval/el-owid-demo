@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 
-import { OWIDTrendChartLines }  from "./OWIDTrendChartLines";
-import { OWIDTrendChartTooltip } from "./OWIDTrendChartTooltip";
+import { OWIDTrendChartLines }  from "./OWIDTrendChart/OWIDTrendChartLines";
+import { OWIDTrendChartTooltip } from "./OWIDTrendChart/OWIDTrendChartTooltip";
 import { baseCSS } from './OWIDBaseChartCSS';
 
 import { config
@@ -36,7 +36,10 @@ export class OWIDBaseChart {
 
   constructor(data: any, options: any) {
       this.data = data;
-  
+
+      this.widthTotal = (options && options.width) || this.widthTotal;
+      this.heightTotal = (options && options.height) || this.heightTotal;
+
       this.marginTop = (options && options.marginTop) || this.marginTop;
       this.marginBottom = (options && options.marginBottom) || this.marginBottom;
       this.marginLeft = (options && options.marginLeft) || this.marginLeft;
