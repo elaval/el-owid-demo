@@ -165,7 +165,7 @@ export class OWIDTrendChart extends OWIDBaseChart {
             .attr("stroke", "lightgrey");
     }
     getClosestYear(posX) {
-        const closestYear = this.dimensions.years.find((d) => d == Math.floor(this.scaleX.invert(posX)));
+        const closestYear = this.dimensions.years.find((d) => d == Math.round(this.scaleX.invert(posX)));
         return closestYear;
     }
     render() {

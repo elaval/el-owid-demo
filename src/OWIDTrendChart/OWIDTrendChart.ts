@@ -220,7 +220,7 @@ export class OWIDTrendChart extends OWIDBaseChart {
 
     getClosestYear(posX:number):number {
         const closestYear = this.dimensions.years.find(
-          (d: number) => d == Math.floor(this.scaleX.invert(posX))
+          (d: number) => d == Math.round(this.scaleX.invert(posX))
         );
     
         return closestYear;

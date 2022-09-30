@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.3.2 Copyright 
+// @elaval/owid-demo v0.3.3 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.3.2";
+var version = "0.3.3";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -21977,7 +21977,7 @@ class OWIDTrendChart extends OWIDBaseChart {
             .attr("stroke", "lightgrey");
     }
     getClosestYear(posX) {
-        const closestYear = this.dimensions.years.find((d) => d == Math.floor(this.scaleX.invert(posX)));
+        const closestYear = this.dimensions.years.find((d) => d == Math.round(this.scaleX.invert(posX)));
         return closestYear;
     }
     render() {
