@@ -9,6 +9,7 @@ export declare class OWIDTrendChart extends OWIDBaseChart {
         name: string;
         data: any;
     }[];
+    selectedYearCallback: any;
     constructor(data: any, options: any);
     setupTrendSVGElements(): void;
     handleMouseMove(e: any): void;

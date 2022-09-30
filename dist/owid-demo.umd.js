@@ -1,11 +1,11 @@
-// @elaval/owid-demo v0.3.0 Copyright 
+// @elaval/owid-demo v0.3.1 Copyright 
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["owid-demo"] = global["owid-demo"] || {}));
 })(this, (function (exports) { 'use strict';
 
-var version = "0.3.0";
+var version = "0.3.1";
 
 function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -21824,6 +21824,7 @@ class OWIDTrendChart extends OWIDBaseChart {
     axisX;
     axisY;
     seriesData;
+    selectedYearCallback;
     constructor(data, options) {
         super(data, options);
         this.marginBottom = config$1.marginBottom;
@@ -21855,6 +21856,7 @@ class OWIDTrendChart extends OWIDBaseChart {
             .value();
         this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
+        this.selectedYearCallback = options && options.callback || function () { };
         if (this.y && this.y.grid) {
             this.showGridY();
         }
@@ -21900,6 +21902,7 @@ class OWIDTrendChart extends OWIDBaseChart {
             year: selectedYear,
             data: tooltipData
         });
+        this.selectedYearCallback(selectedYear);
     }
     handleMouseLeave() {
         this.chartContent && this.chartContent.hideMarker();

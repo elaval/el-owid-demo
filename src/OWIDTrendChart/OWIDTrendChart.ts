@@ -12,6 +12,7 @@ export class OWIDTrendChart extends OWIDBaseChart {
   axisX: d3.Axis<d3.NumberValue>;
   axisY: d3.Axis<d3.NumberValue>;
   seriesData: { name: string; data: any; }[];
+  selectedYearCallback: any;
 
     constructor(data: any, options: any) {
         super(data, options);
@@ -58,6 +59,8 @@ export class OWIDTrendChart extends OWIDBaseChart {
         this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
     
         this.chartContainer.node().appendChild(this.toolTip.render().node());
+
+        this.selectedYearCallback = options && options.callback || function () {}; 
     
         if (this.y && this.y.grid) {
           this.showGridY();
@@ -121,6 +124,8 @@ export class OWIDTrendChart extends OWIDBaseChart {
           year: selectedYear,
           data: tooltipData
         });
+
+        this.selectedYearCallback(selectedYear);
     }
 
     handleMouseLeave(): void {
