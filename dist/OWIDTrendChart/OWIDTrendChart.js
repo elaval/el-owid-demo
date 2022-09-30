@@ -44,7 +44,7 @@ export class OWIDTrendChart extends OWIDBaseChart {
             .value();
         this.toolTip = new OWIDTrendChartTooltip({ colorScale: this.colorScale, containerWidth: this.width });
         this.chartContainer.node().appendChild(this.toolTip.render().node());
-        this.selectedYearCallback = options && options.callback || function () { };
+        this.selectedYearCallback = options && options.selectedYearCallback || function () { };
         if (this.y && this.y.grid) {
             this.showGridY();
         }
